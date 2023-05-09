@@ -10,7 +10,10 @@ const _URL_NEWS = 'https://newsapi.org/v2';
 const _APIKEY = '50ac027653d947f3a05aa1bda9e2bc36';
 
 class NewsService with ChangeNotifier {
+  bool _isLoading = true;
+
   List<Article> headlines = [];
+
   List<Category> categories = [
     Category(FontAwesomeIcons.building, 'business'),
     Category(FontAwesomeIcons.tv, 'entertainment'),
@@ -27,12 +30,15 @@ class NewsService with ChangeNotifier {
 
   NewsService() {
     getTopHeadLines();
+    // categoryArticles[selectedCategory] = headlines;
 
     // Inicializar los categorias con listas vacias para ser llenadas en el metodo getArticlesByCategory
     for (var item in categories) {
       categoryArticles[item.name] = [];
     }
   }
+
+  bool get isLoading => _isLoading;
 
   getTopHeadLines() async {
     final url =
@@ -49,12 +55,14 @@ class NewsService with ChangeNotifier {
 
   set selectedCategory(String valor) {
     _selectedCategory = valor;
+    _isLoading = true;
     getArticlesByCategory(valor);
     notifyListeners();
   }
 
   getArticlesByCategory(String category) async {
     if (categoryArticles[category]!.isNotEmpty) {
+      _isLoading = false;
       notifyListeners();
       return categoryArticles[category];
     }
@@ -67,8 +75,12 @@ class NewsService with ChangeNotifier {
 
     categoryArticles[category]!.addAll(newsResponse.articles);
 
+    _isLoading = false;
+
     notifyListeners();
   }
 
   get getArticulosCategoriaSelecionada => categoryArticles[selectedCategory];
+
+  
 }

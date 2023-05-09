@@ -10,14 +10,31 @@ class Tab2PAge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final newsService = Provider.of<NewsService>(context);
+    print(newsService.categoryArticles);
 
     return SafeArea(
       child: Scaffold(
         body: Column(children: [
           const _ListaCategorias(),
-          Expanded(
-            child: ListaNoticias(newsService.getArticulosCategoriaSelecionada)
-          )
+
+          (newsService.isLoading)
+              ? const Expanded(
+                  child: Column(
+                    children: [
+                      Center(child: CircularProgressIndicator()),
+                      // Container(
+                      //   padding: const EdgeInsets.symmetric(vertical: 15),
+                      //   child: const Text(
+                      //     'Seleciona una Categoria',
+                      //     style: TextStyle(fontSize: 30),
+                      //   ),
+                      // )
+                    ],
+                  ),
+                )
+              : Expanded(
+                  child: ListaNoticias(
+                      newsService.getArticulosCategoriaSelecionada))
         ]),
       ),
     );
